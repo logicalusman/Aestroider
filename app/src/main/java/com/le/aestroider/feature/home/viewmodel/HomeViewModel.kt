@@ -7,8 +7,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModel
 import com.le.aestroider.R
+import com.le.aestroider.data.AestroiderRepository
+import javax.inject.Inject
 
-class HomeViewModel : ViewModel() , LifecycleObserver {
+class HomeViewModel @Inject constructor(repository: AestroiderRepository): ViewModel() , LifecycleObserver {
     sealed class ViewState {
         class UpdateTitle(@StringRes val title: Int) : ViewState()
 

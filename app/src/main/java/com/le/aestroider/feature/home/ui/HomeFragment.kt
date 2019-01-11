@@ -7,17 +7,28 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.le.aestroider.R
+import com.le.aestroider.app.AestroiderApp
 import com.le.aestroider.feature.home.viewmodel.HomeViewModel
+import javax.inject.Inject
 
 /**
- * A simple [Fragment] subclass.
+ * Home screen. Shows the list of aestroid objects retrieved from the Nasa api.
+ *
+ * @author Usman
  *
  */
 class HomeFragment : Fragment() {
 
     private lateinit var viewModel: HomeViewModel
+    @Inject
+    lateinit var viewModelFactory : ViewModelProvider.Factory
+
+    init {
+        AestroiderApp.dataComponent.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,7 +36,7 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-        viewModel = ViewModelProviders.of(activity!!).get(HomeViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity!!,viewModelFactory).get(HomeViewModel::class.java)
         return view
     }
 
