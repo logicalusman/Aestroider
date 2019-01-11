@@ -2,6 +2,7 @@ package com.le.aestroider.di
 
 
 import com.le.aestroider.data.AestroiderRepository
+import com.le.aestroider.data.network.NetworkAdapter
 import com.le.aestroider.data.network.NetworkRepository
 import dagger.Module
 import dagger.Provides
@@ -13,7 +14,7 @@ class DataModule {
     @Provides
     @Singleton
     fun providesAestroiderRepository() : AestroiderRepository {
-        return AestroiderRepository(NetworkRepository())
+        return AestroiderRepository(NetworkRepository(NetworkAdapter.nasaNeoApi()))
     }
 
 }

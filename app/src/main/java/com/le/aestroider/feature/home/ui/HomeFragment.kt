@@ -56,6 +56,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupViews() {
+        viewModel.getNeoFeed()
 
     }
     companion object {

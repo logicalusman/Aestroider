@@ -12,4 +12,8 @@ import javax.inject.Inject
  * @author Usman
  */
 class AestroiderRepository @Inject constructor(private val networkRepository: NetworkRepository) {
+
+    fun getNeoFeed(){
+        networkRepository.getNeoFeed()
+    }
 }

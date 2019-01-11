@@ -10,7 +10,7 @@ import com.le.aestroider.R
 import com.le.aestroider.data.AestroiderRepository
 import javax.inject.Inject
 
-class HomeViewModel @Inject constructor(repository: AestroiderRepository): ViewModel() , LifecycleObserver {
+class HomeViewModel @Inject constructor(private val repository: AestroiderRepository): ViewModel() , LifecycleObserver {
     sealed class ViewState {
         class UpdateTitle(@StringRes val title: Int) : ViewState()
 
@@ -22,5 +22,9 @@ class HomeViewModel @Inject constructor(repository: AestroiderRepository): ViewM
     fun setTitle() {
         viewState.value =
                 ViewState.UpdateTitle(R.string.near_earth_objects)
+    }
+
+    fun getNeoFeed(){
+        repository.getNeoFeed()
     }
 }
