@@ -8,6 +8,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModel
 import com.le.aestroider.R
 import com.le.aestroider.data.AestroiderRepository
+import com.le.aestroider.util.Utils
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(private val repository: AestroiderRepository): ViewModel() , LifecycleObserver {
@@ -25,6 +26,6 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
     }
 
     fun getNeoFeed(){
-        repository.getNeoFeed()
+        repository.getNeoFeed(Utils.getCurrentDate(),Utils.getDateWeekAfterCurrentDate())
     }
 }
