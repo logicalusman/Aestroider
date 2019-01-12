@@ -16,10 +16,10 @@ class UtilsTest {
     }
 
     @Test
-    fun getDate7DaysAfterCurrentDate_returns_7_days_after_date_yyyy_MM_dd_format() {
+    fun getDateWeekAfterCurrentDate_returns_7_days_after_date_yyyy_MM_dd_format() {
         val c = Calendar.getInstance()
         c.time = Date()
         c.add(Calendar.DATE, 7)
-        Assert.assertEquals(datePattern.format(c.time), Utils.getDate7DaysAfterCurrentDate())
+        Assert.assertEquals(datePattern.format(c.time), Utils.getDateWeekAfterCurrentDate())
     }
 }

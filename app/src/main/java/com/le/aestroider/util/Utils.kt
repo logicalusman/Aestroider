@@ -31,9 +31,9 @@ object Utils {
     }
 
     /**
-     * Return date 7 days after current date in yyyy-MM-dd format
+     * Return date a week after current date in yyyy-MM-dd format
      */
-    fun getDate7DaysAfterCurrentDate(): String {
+    fun getDateWeekAfterCurrentDate(): String {
         val calendar = Calendar.getInstance()
         calendar.time = Date()
         calendar.add(Calendar.DATE, 7)
