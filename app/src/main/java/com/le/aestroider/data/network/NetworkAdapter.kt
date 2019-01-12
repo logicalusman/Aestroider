@@ -11,6 +11,8 @@ object NetworkAdapter {
     const val API_AUTH_KEY = "mO4kPg8EJvLCxsMAj9kW2igX5lJwuFSOn3BIIQuy"
     const val BASE_URL = "https://api.nasa.gov"
     const val GET_NEO_FEED = "/neo/rest/v1/feed"
+    const val QUERY_PARAM_START_DATE = "start_date"
+    const val QUERY_PARAM_END_DATE = "end_date"
 
 
     fun nasaNeoApi(): NasaNeoApi {
