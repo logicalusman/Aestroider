@@ -1,5 +1,6 @@
 package com.le.aestroider.util
 
+import android.net.Uri
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.Comparator
@@ -23,6 +24,12 @@ object Utils {
         }
     }
 
+    fun toDateFormatIn_dd_MM_yyyy(dateInFormat_yyyy_MM_dd: String): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        val date = dateFormat.parse(dateInFormat_yyyy_MM_dd)
+        return SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(date)
+    }
+
     /**
      * Returns current date in yyyy-MM-dd format
      */
@@ -38,5 +45,13 @@ object Utils {
         calendar.time = Date()
         calendar.add(Calendar.DATE, 7)
         return SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(calendar.time)
+    }
+
+    /**
+     * Gets parameter value against the given parameter name and the given uri
+     */
+    fun getQueryParameter(uri: String, parameter: String): String {
+        val uriObj = Uri.parse(uri)
+        return uriObj.getQueryParameter(parameter)
     }
 }
