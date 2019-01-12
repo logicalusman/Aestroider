@@ -11,7 +11,8 @@ interface NasaNeoApi {
     fun getMyPriorities(
         @Query(value = "start_date") startDate: String,
         @Query(value = "end_date") endDate: String,
-        @Query(value = "api_key") apiKey: String = NetworkAdapter.API_AUTH_KEY
+        @Query(value = "api_key") apiKey: String = NetworkAdapter.API_AUTH_KEY,
+        @Query(value = "detailed") detailed: Boolean = false
     ):
             Observable<NeoFeedResponse>
 }
