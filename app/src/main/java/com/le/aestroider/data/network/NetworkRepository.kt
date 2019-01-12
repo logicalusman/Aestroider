@@ -21,7 +21,7 @@ class NetworkRepository @Inject constructor(private val neoApi: NasaNeoApi) : Ba
 
     private val TAG = "NetworkRepository"
 
-    fun getNeoFeed(startDate: String, endDate: String): Observable<Result<NearEarthObjectFeed>> {
+    override fun getNeoFeed(startDate: String, endDate: String): Observable<Result<NearEarthObjectFeed>> {
         val neoFeedSubject = SingleSubject.create<Result<NearEarthObjectFeed>>()
         // another way of parsing the feed is using Rx map operator
         val disposable = neoApi.getNeoFeed(startDate = startDate, endDate = endDate).subscribeOn(Schedulers.io())
