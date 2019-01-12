@@ -2,9 +2,27 @@ package com.le.aestroider.data.network.response
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Note that NEO (Near Earth Object) api returns much detailed info, the only info required by the app is
+ * preserved below. More details on https://api.nasa.gov/api.html#NeoWS
+ *
+ * @author Usman
+ */
 data class NeoFeedResponse(
-    @field:SerializedName("links") val pageLinks: HashMap<String, String>,
-    @field:SerializedName("element_count") val numNeoObjects: Int
+    @field:SerializedName("links") val pageLinks: PageLinks,
+    @field:SerializedName("element_count") val numNeoObjects: Int,
+    @field:SerializedName("near_earth_objects") val neoFeed: Map<String, List<NearEarthObjects>>
 )
+
+data class PageLinks(
+    val next: String, val prev: String,
+    @field:SerializedName("self") val current: String
+)
+
+data class NearEarthObjects(
+    val id: String,
+    val name: String, @field:SerializedName("is_potentially_hazardous_asteroid") val isPotentiallyHazerdous: Boolean
+)
+
 
 
