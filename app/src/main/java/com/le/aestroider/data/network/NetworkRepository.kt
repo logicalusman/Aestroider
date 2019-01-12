@@ -23,6 +23,7 @@ class NetworkRepository @Inject constructor(private val neoApi: NasaNeoApi) : Ba
 
     fun getNeoFeed(startDate: String, endDate: String): Observable<Result<NearEarthObjectFeed>> {
         val neoFeedSubject = SingleSubject.create<Result<NearEarthObjectFeed>>()
+        // another way of parsing the feed is using Rx map operator
         val disposable = neoApi.getNeoFeed(startDate = startDate, endDate = endDate).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
                 neoFeedSubject.onSuccess(Result.fomData(parseFeed(it)))
@@ -31,7 +32,6 @@ class NetworkRepository @Inject constructor(private val neoApi: NasaNeoApi) : Ba
             })
 
         return neoFeedSubject.toObservable()
-
     }
 
     private fun parseFeed(response: NeoFeedResponse): NearEarthObjectFeed {
