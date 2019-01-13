@@ -23,6 +23,7 @@ data class Neo(
     val id: String,
     val name: String,
     @field:SerializedName("is_potentially_hazardous_asteroid") val isPotentiallyHazerdous: Boolean,
+    @field:SerializedName("nasa_jpl_url") val url: String,
     @field:SerializedName("absolute_magnitude_h") val absoluteBrightness: Double,
     @field:SerializedName("estimated_diameter") val estimatedDiameter: EstimatedDiameter
 

@@ -9,6 +9,7 @@ data class NearEarthObject(
     val name: String,
     val isPotentialyHazerdous: Boolean,
     val closeApproachDate: String,
+    val url: String,
     val absoluteBrightness: Double,
     val estimatedDiameterMin: Double,
     val estimatedDiameterMax: Double

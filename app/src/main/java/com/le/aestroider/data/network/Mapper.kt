@@ -22,6 +22,7 @@ object Mapper {
                     neo.name,
                     neo.isPotentiallyHazerdous,
                     closeApproachDate,
+                    neo.url,
                     neo.absoluteBrightness,
                     neo.estimatedDiameter.kilometers.estimatedDiameterMin,
                     neo.estimatedDiameter.kilometers.estimatedDiameterMax
