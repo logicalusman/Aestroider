@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.le.aestroider.R
 import com.le.aestroider.app.AestroiderApp
+import com.le.aestroider.domain.NearEarthObject
 import com.le.aestroider.feature.home.adapter.HomeAdapter
 import com.le.aestroider.feature.home.viewmodel.HomeViewModel
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -27,11 +28,11 @@ import javax.inject.Inject
 class HomeFragment : Fragment() {
 
     @Inject
-    lateinit var viewModelFactory : ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     // private vars
     private lateinit var viewModel: HomeViewModel
-    private var homeAdapter : HomeAdapter? = null
+    private var homeAdapter: HomeAdapter? = null
 
     init {
         AestroiderApp.dataComponent.inject(this)
@@ -43,7 +44,7 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-        viewModel = ViewModelProviders.of(activity!!,viewModelFactory).get(HomeViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeViewModel::class.java)
         return view
     }
 
@@ -52,6 +53,10 @@ class HomeFragment : Fragment() {
         subscribeViewStates()
         lifecycle.addObserver(viewModel)
         setupViews()
+        getNeoFeed()
+    }
+
+    private fun getNeoFeed() {
         viewModel.getNeoFeed()
     }
 
@@ -59,9 +64,14 @@ class HomeFragment : Fragment() {
         viewModel.viewState.observe(activity!!, Observer {
             when (it) {
                 is HomeViewModel.ViewState.UpdateTitle -> activity!!.setTitle(it.title)
-                is HomeViewModel.ViewState.UpdateList -> homeAdapter?.listItems = it.list
+                is HomeViewModel.ViewState.UpdateList -> updateNeoFeed(it.list)
             }
         })
+    }
+
+    private fun updateNeoFeed(feed: List<NearEarthObject>) {
+        homeAdapter?.listItems = feed
+        swipe_to_fresh.isRefreshing = false
     }
 
     private fun setupViews() {
@@ -70,7 +80,11 @@ class HomeFragment : Fragment() {
         home_rv.addItemDecoration(DividerItemDecoration(activity, layoutManager.orientation))
         homeAdapter = HomeAdapter(activity!!)
         home_rv.adapter = homeAdapter
+        swipe_to_fresh.setOnRefreshListener {
+            getNeoFeed()
+        }
     }
+
     companion object {
         fun newInstance(): HomeFragment {
             return HomeFragment()
