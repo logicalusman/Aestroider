@@ -11,8 +11,10 @@ import com.le.aestroider.feature.home.viewholder.HomeViewHolder
 
 /**
  * <p>Adapter that populates the neo feeds.</p>
- * Reservation: Methods such as add* can moved to a base class, so that others adapters can
+ * Reservation: Methods such as add* can be moved to a base class if project expands, so that others adapters can
  * use them without writing their own.
+ *
+ * @author Usman
  */
 class HomeAdapter(private val context: Context) : RecyclerView.Adapter<HomeViewHolder>() {
 
