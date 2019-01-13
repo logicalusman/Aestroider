@@ -1,11 +1,11 @@
 package com.le.aestroider.feature.home.ui
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -17,11 +17,12 @@ import com.le.aestroider.app.AestroiderApp
 import com.le.aestroider.domain.NearEarthObject
 import com.le.aestroider.feature.home.adapter.HomeAdapter
 import com.le.aestroider.feature.home.viewmodel.HomeViewModel
+import com.le.aestroider.feature.neodetails.ui.NeoDetailsActivity
 import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
 
 /**
- * Home screen. Shows the list of aestroid objects retrieved from the Nasa Neo api.
+ * Home screen. Shows the list of aestroid objects retrieved from the Neo api.
  *
  * @author Usman
  *
@@ -56,27 +57,15 @@ class HomeFragment : Fragment() {
         getNeoFeed()
     }
 
-    private fun getNeoFeed() {
-        viewModel.getNeoFeed()
-    }
-
     private fun subscribeViewStates() {
         viewModel.viewState.observe(activity!!, Observer {
             when (it) {
                 is HomeViewModel.ViewState.UpdateTitle -> activity!!.setTitle(it.title)
                 is HomeViewModel.ViewState.UpdateList -> updateNeoFeed(it.list)
                 is HomeViewModel.ViewState.ShowLoading -> showLoading(it.show)
+                is HomeViewModel.ViewState.LaunchNeoDetailsScreen -> launchNeoDetailsActivity(it.nearEarthObject)
             }
         })
-    }
-
-    private fun updateNeoFeed(feed: List<NearEarthObject>) {
-        homeAdapter?.listItems = feed
-        swipe_to_fresh.isRefreshing = false
-    }
-
-    private fun showLoading(show: Boolean) {
-        swipe_to_fresh.isRefreshing = show
     }
 
     private fun setupViews() {
@@ -89,8 +78,27 @@ class HomeFragment : Fragment() {
             getNeoFeed()
         }
         homeAdapter?.onClickObserver?.observe(this, Observer {
-            Toast.makeText(activity!!,it.name,Toast.LENGTH_SHORT).show()
+            viewModel.onNeoItemSelected(it)
         })
+    }
+
+    private fun getNeoFeed() {
+        viewModel.getNeoFeed()
+    }
+
+    private fun updateNeoFeed(feed: List<NearEarthObject>) {
+        homeAdapter?.listItems = feed
+        swipe_to_fresh.isRefreshing = false
+    }
+
+    private fun showLoading(show: Boolean) {
+        swipe_to_fresh.isRefreshing = show
+    }
+
+    private fun launchNeoDetailsActivity(nearEarthObject: NearEarthObject) {
+        val intent = Intent(activity, NeoDetailsActivity::class.java)
+        intent.putExtra(NeoDetailsActivity.EXTRA_NEO_DETAILS, nearEarthObject)
+        startActivity(intent)
     }
 
     companion object {

@@ -8,7 +8,6 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModel
 import com.le.aestroider.R
 import com.le.aestroider.data.AestroiderRepository
-import com.le.aestroider.domain.ErrorType
 import com.le.aestroider.domain.NearEarthObject
 import com.le.aestroider.util.Utils
 import io.reactivex.disposables.Disposable
@@ -19,6 +18,7 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
         class UpdateTitle(@StringRes val title: Int) : ViewState()
         class ShowLoading(val show: Boolean) : ViewState()
         class UpdateList(val list : List<NearEarthObject>) : ViewState()
+        class LaunchNeoDetailsScreen(val nearEarthObject: NearEarthObject) : ViewState()
     }
 
     val viewState: MutableLiveData<ViewState> = MutableLiveData()
@@ -30,6 +30,10 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
     fun setTitle() {
         viewState.value =
                 ViewState.UpdateTitle(R.string.near_earth_objects)
+    }
+
+    fun onNeoItemSelected(nearEarthObject: NearEarthObject){
+        viewState.value = ViewState.LaunchNeoDetailsScreen(nearEarthObject)
     }
 
     fun getNeoFeed() {
