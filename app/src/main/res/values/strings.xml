@@ -3,4 +3,5 @@
     <string name="near_earth_objects">Near Earth Objects</string>
     <string name="potential_hazard_warning">Potential Hazard Warning</string>
     <string name="share">Share</string>
+    <string name="open_on_jpl_nasa_gov">Open on JPL.NASA.GOV</string>
 </resources>
