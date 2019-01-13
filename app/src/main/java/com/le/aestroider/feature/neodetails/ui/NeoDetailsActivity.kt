@@ -1,6 +1,7 @@
 package com.le.aestroider.feature.neodetails.ui
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -22,6 +23,11 @@ class NeoDetailsActivity : AppCompatActivity() {
             )
         )
         supportFragmentManager.beginTransaction().add(R.id.neo_details_fragment_container, fragment).commit()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.neo_details_screen_menu, menu)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
