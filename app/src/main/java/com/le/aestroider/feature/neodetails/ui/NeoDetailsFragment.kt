@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.le.aestroider.R
 import com.le.aestroider.domain.NearEarthObject
+import com.le.aestroider.feature.neodetails.ui.viewmodel.NeoDetailsViewModel
 
 
 /**
@@ -18,12 +20,21 @@ class NeoDetailsFragment : Fragment() {
 
     var nearEarthObject: NearEarthObject? = null
 
+    // private vars
+    private lateinit var viewModel: NeoDetailsViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_neo_details, container, false)
+        val view = inflater.inflate(R.layout.fragment_neo_details, container, false)
+        viewModel = ViewModelProviders.of(activity!!).get(NeoDetailsViewModel::class.java)
+        return view
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 
 
