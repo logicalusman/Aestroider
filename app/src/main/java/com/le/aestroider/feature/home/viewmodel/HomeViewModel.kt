@@ -10,6 +10,7 @@ import com.le.aestroider.R
 import com.le.aestroider.data.AestroiderRepository
 import com.le.aestroider.domain.ErrorType
 import com.le.aestroider.domain.NearEarthObject
+import com.le.aestroider.domain.NearEarthObjectFeed
 import com.le.aestroider.util.Utils
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
@@ -27,6 +28,8 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
 
     // private vars
     private var disposable: Disposable? = null
+    // acts as a cache, this will avoid redundant trips to the network api
+    private var feedCache : NearEarthObjectFeed? = null
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun setTitle() {
