@@ -10,12 +10,12 @@
 
     <style name="ListViewMainText">
         <item name="android:textColor">@color/colorBlack</item>
-        <item name="android:textSize">17sp</item>
+        <item name="android:textSize">15sp</item>
     </style>
 
     <style name="ListViewSubText">
         <item name="android:textColor">@color/colorGrey</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">13sp</item>
     </style>
 
     <style name="AppButton">
