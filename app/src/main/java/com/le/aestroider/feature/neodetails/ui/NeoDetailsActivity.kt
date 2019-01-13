@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import com.le.aestroider.R
 
 class NeoDetailsActivity : AppCompatActivity() {
@@ -12,6 +13,8 @@ class NeoDetailsActivity : AppCompatActivity() {
     companion object {
         val EXTRA_NEO_DETAILS = "com.le.aestroider.extra_neo_details"
     }
+    // fragments of this activity can simply observe to it for a user click on share menu item
+    val shareClickObserver = MutableLiveData<Unit>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,9 +34,18 @@ class NeoDetailsActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == android.R.id.home) {
-            finish()
+
+        return when (item?.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            R.id.action_share -> {
+                shareClickObserver.value = Unit
+                true
+            }
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
+
     }
 }

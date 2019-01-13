@@ -13,6 +13,7 @@ class NeoDetailsViewModel : ViewModel() {
         class UpdateTitle(@StringRes val title: String) : ViewState()
         class UpdateList(val list: List<NearEarthObjectDetailsItem>) : ViewState()
         class LaunchBrowser(val uri: String) : ViewState()
+        class ShareData(val data: String) : ViewState()
     }
 
     val viewState: MutableLiveData<ViewState> = MutableLiveData()
@@ -27,9 +28,15 @@ class NeoDetailsViewModel : ViewModel() {
         populateUi(nearEarthObject)
     }
 
-    fun onOpenUriButtonSelected(){
+    fun onOpenUriAction() {
         nearEarthObject?.let {
             viewState.value = ViewState.LaunchBrowser(it.url)
+        }
+    }
+
+    fun onShareUriAction() {
+        nearEarthObject?.let {
+            viewState.value = ViewState.ShareData(it.url)
         }
     }
 

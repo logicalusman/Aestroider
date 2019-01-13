@@ -55,6 +55,7 @@ class NeoDetailsFragment : Fragment() {
                 is NeoDetailsViewModel.ViewState.UpdateTitle -> activity!!.title = it.title
                 is NeoDetailsViewModel.ViewState.UpdateList -> updateNeoFeedDetails(it.list)
                 is NeoDetailsViewModel.ViewState.LaunchBrowser -> launchBrowser(it.uri)
+                is NeoDetailsViewModel.ViewState.ShareData -> shareUri(it.data)
             }
         })
     }
@@ -69,6 +70,16 @@ class NeoDetailsFragment : Fragment() {
         startActivity(i)
     }
 
+    private fun shareUri(uri: String) {
+        val i = Intent()
+        i.action = Intent.ACTION_SEND
+        // making it plain text will bring more apps to share the url with
+        i.putExtra(Intent.EXTRA_TEXT, uri)
+        i.type = "text/plain"
+
+        startActivity(Intent.createChooser(i, resources.getText(R.string.sharing_neo_url)))
+    }
+
     private fun setupViews() {
         val layoutManager = LinearLayoutManager(activity)
         neo_details_rv.layoutManager = layoutManager
@@ -76,8 +87,11 @@ class NeoDetailsFragment : Fragment() {
         neoDetailsAdapter = NeoDetailsAdapter(activity!!)
         neo_details_rv.adapter = neoDetailsAdapter
         url_btn.setOnClickListener {
-            viewModel.onOpenUriButtonSelected()
+            viewModel.onOpenUriAction()
         }
+        (activity as NeoDetailsActivity).shareClickObserver.observe(this, Observer {
+            viewModel.onShareUriAction()
+        })
     }
 
     companion object {

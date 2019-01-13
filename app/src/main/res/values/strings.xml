@@ -10,4 +10,5 @@
     <string name="no_hazard">No Hazard</string>
     <string name="absolute_brightness">Absolute brightness</string>
     <string name="estimated_diameter">Estimated diameter</string>
+    <string name="sharing_neo_url">Sharing Neo Url</string>
 </resources>
