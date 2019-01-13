@@ -4,4 +4,6 @@
     <string name="potential_hazard_warning">Potential Hazard Warning</string>
     <string name="share">Share</string>
     <string name="open_on_jpl_nasa_gov">Open on JPL.NASA.GOV</string>
+    <string name="object_is_not_on_collision_course_with_earth">Object is not on collision course with Earth</string>
+    <string name="collision_course_with_earth">Collision course with Earth</string>
 </resources>
