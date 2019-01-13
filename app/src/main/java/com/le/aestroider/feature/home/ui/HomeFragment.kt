@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -42,7 +43,6 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeViewModel::class.java)
         return view
@@ -88,6 +88,9 @@ class HomeFragment : Fragment() {
         swipe_to_fresh.setOnRefreshListener {
             getNeoFeed()
         }
+        homeAdapter?.onClickObserver?.observe(this, Observer {
+            Toast.makeText(activity!!,it.name,Toast.LENGTH_SHORT).show()
+        })
     }
 
     companion object {
