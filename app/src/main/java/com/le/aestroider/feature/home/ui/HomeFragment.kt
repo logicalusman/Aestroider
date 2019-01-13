@@ -65,6 +65,7 @@ class HomeFragment : Fragment() {
             when (it) {
                 is HomeViewModel.ViewState.UpdateTitle -> activity!!.setTitle(it.title)
                 is HomeViewModel.ViewState.UpdateList -> updateNeoFeed(it.list)
+                is HomeViewModel.ViewState.ShowLoading -> showLoading(it.show)
             }
         })
     }
@@ -72,6 +73,10 @@ class HomeFragment : Fragment() {
     private fun updateNeoFeed(feed: List<NearEarthObject>) {
         homeAdapter?.listItems = feed
         swipe_to_fresh.isRefreshing = false
+    }
+
+    private fun showLoading(show: Boolean) {
+        swipe_to_fresh.isRefreshing = show
     }
 
     private fun setupViews() {
