@@ -40,6 +40,8 @@ class HomeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             itemView.neo_date_tv.text = it.closeApproachDate
             if (it.isPotentialyHazerdous) {
                 itemView.potentialHazardWarning_iv.visibility = View.VISIBLE
+            } else {
+                itemView.potentialHazardWarning_iv.visibility = View.GONE
             }
         }
     }
