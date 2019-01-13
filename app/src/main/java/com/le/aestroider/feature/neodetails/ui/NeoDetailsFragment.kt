@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.le.aestroider.R
 import com.le.aestroider.domain.NearEarthObject
-import com.le.aestroider.feature.neodetails.ui.viewmodel.NeoDetailsViewModel
+import com.le.aestroider.feature.neodetails.viewmodel.NeoDetailsViewModel
 
 
 /**

@@ -1,4 +1,4 @@
-package com.le.aestroider.feature.neodetails.ui.viewmodel
+package com.le.aestroider.feature.neodetails.viewmodel
 
 import androidx.lifecycle.ViewModel
 
