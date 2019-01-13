@@ -9,22 +9,29 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.le.aestroider.R
 import com.le.aestroider.app.AestroiderApp
+import com.le.aestroider.feature.home.adapter.HomeAdapter
 import com.le.aestroider.feature.home.viewmodel.HomeViewModel
+import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
 
 /**
- * Home screen. Shows the list of aestroid objects retrieved from the Nasa api.
+ * Home screen. Shows the list of aestroid objects retrieved from the Nasa Neo api.
  *
  * @author Usman
  *
  */
 class HomeFragment : Fragment() {
 
-    private lateinit var viewModel: HomeViewModel
     @Inject
     lateinit var viewModelFactory : ViewModelProvider.Factory
+
+    // private vars
+    private lateinit var viewModel: HomeViewModel
+    private var homeAdapter : HomeAdapter? = null
 
     init {
         AestroiderApp.dataComponent.inject(this)
@@ -45,19 +52,24 @@ class HomeFragment : Fragment() {
         subscribeViewStates()
         lifecycle.addObserver(viewModel)
         setupViews()
+        viewModel.getNeoFeed()
     }
 
     private fun subscribeViewStates() {
         viewModel.viewState.observe(activity!!, Observer {
             when (it) {
                 is HomeViewModel.ViewState.UpdateTitle -> activity!!.setTitle(it.title)
+                is HomeViewModel.ViewState.UpdateList -> homeAdapter?.listItems = it.list
             }
         })
     }
 
     private fun setupViews() {
-        viewModel.getNeoFeed()
-
+        val layoutManager = LinearLayoutManager(activity)
+        home_rv.layoutManager = layoutManager
+        home_rv.addItemDecoration(DividerItemDecoration(activity, layoutManager.orientation))
+        homeAdapter = HomeAdapter(activity!!)
+        home_rv.adapter = homeAdapter
     }
     companion object {
         fun newInstance(): HomeFragment {
