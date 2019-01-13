@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -64,6 +65,7 @@ class HomeFragment : Fragment() {
                 is HomeViewModel.ViewState.UpdateList -> updateNeoFeed(it.list)
                 is HomeViewModel.ViewState.ShowLoading -> showLoading(it.show)
                 is HomeViewModel.ViewState.LaunchNeoDetailsScreen -> launchNeoDetailsActivity(it.nearEarthObject)
+                is HomeViewModel.ViewState.ShowErrorMessage -> showErrorMessage(it.show, it.message)
             }
         })
     }
@@ -80,6 +82,9 @@ class HomeFragment : Fragment() {
         homeAdapter?.onClickObserver?.observe(this, Observer {
             viewModel.onNeoItemSelected(it)
         })
+        retry_btn.setOnClickListener {
+            viewModel.getNeoFeed()
+        }
     }
 
     private fun getNeoFeed() {
@@ -93,6 +98,24 @@ class HomeFragment : Fragment() {
 
     private fun showLoading(show: Boolean) {
         swipe_to_fresh.isRefreshing = show
+    }
+
+    private fun showErrorMessage(show: Boolean, @StringRes message: Int) {
+        if (show) {
+            swipe_to_fresh.visibility = View.GONE
+            error_container.visibility = View.VISIBLE
+            retry_btn.visibility = View.VISIBLE
+            error_msg_tv.setText(message)
+        } else {
+            hideErrorMessage()
+        }
+    }
+
+    private fun hideErrorMessage() {
+        swipe_to_fresh.visibility = View.VISIBLE
+        error_container.visibility = View.GONE
+        retry_btn.visibility = View.GONE
+
     }
 
     private fun launchNeoDetailsActivity(nearEarthObject: NearEarthObject) {

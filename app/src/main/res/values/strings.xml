@@ -11,4 +11,7 @@
     <string name="absolute_brightness">Absolute brightness</string>
     <string name="estimated_diameter">Estimated diameter</string>
     <string name="sharing_neo_url">Sharing Neo Url</string>
+    <string name="oops">Oops!</string>
+    <string name="internet_error_msg">Something went wrong. Make sure you are connected to the internet.</string>
+    <string name="retry">Retry</string>
 </resources>
