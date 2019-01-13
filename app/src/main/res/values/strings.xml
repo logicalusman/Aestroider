@@ -6,4 +6,8 @@
     <string name="open_on_jpl_nasa_gov">Open on JPL.NASA.GOV</string>
     <string name="object_is_not_on_collision_course_with_earth">Object is not on collision course with Earth</string>
     <string name="collision_course_with_earth">Collision course with Earth</string>
+    <string name="hazardous">Hazardous</string>
+    <string name="no_hazard">No Hazard</string>
+    <string name="absolute_brightness">Absolute brightness</string>
+    <string name="estimated_diameter">Estimated diameter</string>
 </resources>
