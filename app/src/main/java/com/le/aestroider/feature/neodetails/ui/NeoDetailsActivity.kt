@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.le.aestroider.R
-import com.le.aestroider.domain.NearEarthObject
 
 class NeoDetailsActivity : AppCompatActivity() {
 
@@ -16,7 +15,7 @@ class NeoDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_neo_details)
         val fragment: Fragment = NeoDetailsFragment.newInstance(
-            intent.getParcelableExtra<NearEarthObject>(
+            intent.getParcelableExtra(
                 EXTRA_NEO_DETAILS
             )
         )
