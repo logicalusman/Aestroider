@@ -39,7 +39,7 @@ class NetworkRepository @Inject constructor(private val neoApi: NasaNeoApi) : Ba
         val feedEndDate = Utils.getQueryParameter(response.pageLinks.current, NetworkAdapter.QUERY_PARAM_END_DATE)
         val nextFeedStartDate = Utils.getQueryParameter(response.pageLinks.next, NetworkAdapter.QUERY_PARAM_START_DATE)
         val nextFeedEndDate = Utils.getQueryParameter(response.pageLinks.next, NetworkAdapter.QUERY_PARAM_END_DATE)
-        val nearEarthObjectFeed = Mapper.toListOfNearEarthObject(response.neoFeed)
+        val nearEarthObjectFeed = Mapper.toListOfNearEarthObject(response.neoFeed.toSortedMap(Utils.dateComparator()))
         return NearEarthObjectFeed(feedStartDate, feedEndDate, nextFeedStartDate, nextFeedEndDate, nearEarthObjectFeed)
     }
 
