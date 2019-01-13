@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName
 data class NeoFeedResponse(
     @field:SerializedName("links") val pageLinks: PageLinks,
     @field:SerializedName("element_count") val numNeoObjects: Int,
-    @field:SerializedName("near_earth_objects") val neoFeed: Map<String, List<Neo>>
+    @field:SerializedName("near_earth_objects") val neoFeed: Map<String, MutableList<Neo>>
 )
 
 data class PageLinks(

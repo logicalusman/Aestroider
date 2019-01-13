@@ -19,7 +19,7 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
     sealed class ViewState {
         class UpdateTitle(@StringRes val title: Int) : ViewState()
         class ShowLoading(val show: Boolean) : ViewState()
-        class UpdateList(val list: List<NearEarthObject>) : ViewState()
+        class UpdateList(val list: MutableList<NearEarthObject>) : ViewState()
         class LaunchNeoDetailsScreen(val nearEarthObject: NearEarthObject) : ViewState()
         class ShowErrorMessage(val show: Boolean, @StringRes val message: Int) : ViewState()
     }
@@ -29,7 +29,7 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
     // private vars
     private var disposable: Disposable? = null
     // acts as a cache, this will avoid redundant trips to the network api
-    private var feedCache : NearEarthObjectFeed? = null
+    private var feedCache: NearEarthObjectFeed? = null
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun setTitle() {

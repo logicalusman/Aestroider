@@ -5,5 +5,5 @@ data class NearEarthObjectFeed(
     val feedEndDate: String,
     val nextFeedStartDate: String,
     val nextFeedEndDate: String,
-    val feed: List<NearEarthObject>
+    val feed: MutableList<NearEarthObject>
 )

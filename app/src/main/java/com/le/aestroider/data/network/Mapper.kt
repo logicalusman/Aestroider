@@ -12,7 +12,7 @@ import com.le.aestroider.util.Utils
  */
 object Mapper {
 
-    fun toListOfNearEarthObject(neoFeed: Map<String, List<Neo>>): List<NearEarthObject> {
+    fun toListOfNearEarthObject(neoFeed: Map<String, List<Neo>>): MutableList<NearEarthObject> {
         val listOfNearEarthObject = mutableListOf<NearEarthObject>()
         neoFeed.forEach {
             val closeApproachDate = Utils.toDateFormatIn_dd_MM_yyyy(it.key)

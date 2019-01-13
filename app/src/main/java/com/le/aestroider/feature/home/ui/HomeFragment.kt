@@ -91,7 +91,7 @@ class HomeFragment : Fragment() {
         viewModel.getNeoFeed()
     }
 
-    private fun updateNeoFeed(feed: List<NearEarthObject>) {
+    private fun updateNeoFeed(feed: MutableList<NearEarthObject>) {
         homeAdapter?.listItems = feed
         swipe_to_fresh.isRefreshing = false
     }
