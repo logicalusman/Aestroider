@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Aestroider</string>
     <string name="near_earth_objects">Near Earth Objects</string>
+    <string name="potential_hazard_warning">Potential Hazard Warning</string>
 </resources>
