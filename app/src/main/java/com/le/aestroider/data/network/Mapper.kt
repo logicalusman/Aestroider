@@ -17,7 +17,15 @@ object Mapper {
         neoFeed.forEach {
             val closeApproachDate = Utils.toDateFormatIn_dd_MM_yyyy(it.key)
             it.value.forEach { neo ->
-                val nearEarthObject = NearEarthObject(neo.id, neo.name, neo.isPotentiallyHazerdous, closeApproachDate)
+                val nearEarthObject = NearEarthObject(
+                    neo.id,
+                    neo.name,
+                    neo.isPotentiallyHazerdous,
+                    closeApproachDate,
+                    neo.absoluteBrightness,
+                    neo.estimatedDiameter.kilometers.estimatedDiameterMin,
+                    neo.estimatedDiameter.kilometers.estimatedDiameterMax
+                )
                 listOfNearEarthObject.add(nearEarthObject)
             }
         }

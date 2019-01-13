@@ -21,7 +21,18 @@ data class PageLinks(
 
 data class Neo(
     val id: String,
-    val name: String, @field:SerializedName("is_potentially_hazardous_asteroid") val isPotentiallyHazerdous: Boolean
+    val name: String,
+    @field:SerializedName("is_potentially_hazardous_asteroid") val isPotentiallyHazerdous: Boolean,
+    @field:SerializedName("absolute_magnitude_h") val absoluteBrightness: Double,
+    @field:SerializedName("estimated_diameter") val estimatedDiameter: EstimatedDiameter
+
+)
+
+data class EstimatedDiameter(val kilometers: Kilometers)
+
+data class Kilometers(
+    @field:SerializedName("estimated_diameter_min") val estimatedDiameterMin: Double,
+    @field:SerializedName("estimated_diameter_max") val estimatedDiameterMax: Double
 )
 
 
