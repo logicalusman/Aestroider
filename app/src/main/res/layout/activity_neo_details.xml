@@ -15,7 +15,7 @@
             android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:id="@+id/view_details_fragment_container"
+            android:id="@+id/neo_details_fragment_container"
             />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
