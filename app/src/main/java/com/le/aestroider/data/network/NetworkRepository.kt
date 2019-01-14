@@ -12,7 +12,7 @@ import io.reactivex.subjects.SingleSubject
 import javax.inject.Inject
 
 /**
- * Performs data operation over the network. This class is internal to data layer - viewmodel(s) should never access this
+ * Performs data operations over the network. This class is internal to data layer - viewmodel(s) should never access this
  * class.
  *
  * @author Usman
@@ -20,6 +20,8 @@ import javax.inject.Inject
 class NetworkRepository @Inject constructor(private val neoApi: NasaNeoApi) : BaseRepository {
 
     private val TAG = "NetworkRepository"
+    // The api only allows 7 days of feed in a single call
+    val maxDaysFeedLimit = 7
 
     override fun getNeoFeed(startDate: String, endDate: String): Observable<Result<NearEarthObjectFeed>> {
         val neoFeedSubject = SingleSubject.create<Result<NearEarthObjectFeed>>()

@@ -19,4 +19,11 @@ class AestroiderRepository @Inject constructor(private val networkRepository: Ne
     fun getNeoFeed(startDate: String, endDate: String): Observable<Result<NearEarthObjectFeed>> {
         return networkRepository.getNeoFeed(startDate, endDate)
     }
+
+    /**
+     * Gets the number of maximum days the feed can retrieved
+     */
+    fun getMaxDaysFeedLimit(): Int {
+        return networkRepository.maxDaysFeedLimit
+    }
 }

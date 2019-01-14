@@ -38,13 +38,16 @@ object Utils {
     }
 
     /**
-     * Return date a week after current date in yyyy-MM-dd format
+     * Adds given num of days to the given date. Note that the given and returned days are in
+     * yyyy-MM-dd format
      */
-    fun getDateWeekAfterCurrentDate(): String {
+    fun addDaysToDate(date: String, numDaysAfter: Int): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        val d = sdf.parse(date)
         val calendar = Calendar.getInstance()
-        calendar.time = Date()
-        calendar.add(Calendar.DATE, 7)
-        return SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(calendar.time)
+        calendar.time = d
+        calendar.add(Calendar.DATE, numDaysAfter)
+        return sdf.format(calendar.time)
     }
 
     /**
