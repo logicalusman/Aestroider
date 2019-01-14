@@ -21,6 +21,7 @@ import org.junit.Test
 import org.junit.rules.TestRule
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
 
 class HomeViewModelTest {
 
@@ -81,7 +82,6 @@ class HomeViewModelTest {
         homeViewModel.onNeoItemSelected(neoItem)
         Mockito.verify(mockObserver)
             .onChanged(homeViewModel.viewState.value as HomeViewModel.ViewState.LaunchNeoDetailsScreen)
-
         Assert.assertEquals(
             neoItem,
             (homeViewModel.viewState.value as HomeViewModel.ViewState.LaunchNeoDetailsScreen).nearEarthObject
@@ -95,16 +95,35 @@ class HomeViewModelTest {
 
     @Test
     fun getNeoFeed() {
+
         Mockito.`when`(
             aestroiderRepositoryMock.getNeoFeed(
                 Utils.getCurrentDate(),
                 Utils.addDaysToDate(Utils.getCurrentDate(), 6)
             )
         ).thenReturn(resultObservable)
+
+        Mockito.`when`(
+            aestroiderRepositoryMock.getMaxDaysFeedLimit()
+        ).thenReturn(7)
+
+
         val argumentCaptor = argumentCaptor<HomeViewModel.ViewState>()
         homeViewModel.getNeoFeed(false)
-        Mockito.verify(mockObserver).onChanged(argumentCaptor.capture())
+        Mockito.verify(mockObserver, times(4)).onChanged(argumentCaptor.capture())
+        // the calls changes ui state 4 times
         val listOfStates = argumentCaptor.allValues
+        Assert.assertEquals(4, listOfStates.size)
+        Assert.assertTrue(listOfStates[0] is HomeViewModel.ViewState.ShowErrorMessage)
+        Assert.assertTrue(listOfStates[1] is HomeViewModel.ViewState.ShowLoading)
+        Assert.assertTrue(listOfStates[2] is HomeViewModel.ViewState.ShowLoading)
+        Assert.assertTrue(listOfStates[3] is HomeViewModel.ViewState.UpdateList)
 
+        // check the list
+        val list = (listOfStates[3] as HomeViewModel.ViewState.UpdateList).list
+        Assert.assertEquals(listOfNeo.size,list.size)
+        // nice to test some items
+        Assert.assertEquals("Alpha aes4",list.get(3).name)
+        Assert.assertEquals("http://url.com",list.get(7).url)
     }
 }
