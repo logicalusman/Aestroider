@@ -13,6 +13,7 @@ import com.le.aestroider.domain.Result
 import com.le.aestroider.util.Utils
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.verify
 import io.reactivex.Observable
 import junit.framework.Assert
 import org.junit.Before
@@ -35,6 +36,8 @@ class HomeViewModelTest {
     lateinit var homeViewModel: HomeViewModel
     val aestroiderRepositoryMock: AestroiderRepository = mock()
     val mockObserver: Observer<HomeViewModel.ViewState> = mock()
+    val argumentCaptor = argumentCaptor<HomeViewModel.ViewState>()
+
 
     val neoItem = NearEarthObject(
         "id-1", "Alpha aes", true, "2018-05-07",
@@ -51,8 +54,10 @@ class HomeViewModelTest {
                 )
             )
         neoFeed = NearEarthObjectFeed(
-            "2018-01-14", "2018-01-20",
-            "2018-01-20", "2018-01-26", listOfNeo
+            Utils.getCurrentDate(), Utils.addDaysToDate(Utils.getCurrentDate(), 6),
+            Utils.addDaysToDate(Utils.getCurrentDate(), 7), Utils.addDaysToDate(
+                Utils.getCurrentDate(), 13
+            ), listOfNeo
         )
         neoFeed?.let {
             result = Result.fomData(it)
@@ -60,6 +65,15 @@ class HomeViewModelTest {
         resultObservable = Observable.just(result)
         homeViewModel = HomeViewModel(aestroiderRepositoryMock)
         homeViewModel.viewState.observeForever(mockObserver)
+
+        Mockito.doReturn(resultObservable).`when`(aestroiderRepositoryMock).getNeoFeed(
+            Utils.getCurrentDate(),
+            Utils.addDaysToDate(Utils.getCurrentDate(), 6)
+        )
+
+        Mockito.`when`(
+            aestroiderRepositoryMock.getMaxDaysFeedLimit()
+        ).thenReturn(7)
     }
 
     @Test
@@ -88,27 +102,9 @@ class HomeViewModelTest {
         )
     }
 
-    @Test
-    fun getNextNeoFeed() {
-
-    }
 
     @Test
     fun getNeoFeed() {
-
-        Mockito.`when`(
-            aestroiderRepositoryMock.getNeoFeed(
-                Utils.getCurrentDate(),
-                Utils.addDaysToDate(Utils.getCurrentDate(), 6)
-            )
-        ).thenReturn(resultObservable)
-
-        Mockito.`when`(
-            aestroiderRepositoryMock.getMaxDaysFeedLimit()
-        ).thenReturn(7)
-
-
-        val argumentCaptor = argumentCaptor<HomeViewModel.ViewState>()
         homeViewModel.getNeoFeed(false)
         Mockito.verify(mockObserver, times(4)).onChanged(argumentCaptor.capture())
         // the calls changes ui state 4 times
@@ -121,9 +117,20 @@ class HomeViewModelTest {
 
         // check the list
         val list = (listOfStates[3] as HomeViewModel.ViewState.UpdateList).list
-        Assert.assertEquals(listOfNeo.size,list.size)
+        Assert.assertEquals(listOfNeo.size, list.size)
         // nice to test some items
-        Assert.assertEquals("Alpha aes4",list.get(3).name)
-        Assert.assertEquals("http://url.com",list.get(7).url)
+        Assert.assertEquals("Alpha aes4", list.get(3).name)
+        Assert.assertEquals("http://url.com", list.get(7).url)
+    }
+
+    @Test
+    fun getNeoFeed_when_data_is_received_from_cache() {
+        // Call get feed twice. 2nd call should not go to repository, it will use cache
+        homeViewModel.getNeoFeed(false)
+        homeViewModel.getNeoFeed(false)
+        verify(aestroiderRepositoryMock, times(1)).getNeoFeed(
+            Utils.getCurrentDate(),
+            Utils.addDaysToDate(Utils.getCurrentDate(), 6)
+        )
     }
 }
