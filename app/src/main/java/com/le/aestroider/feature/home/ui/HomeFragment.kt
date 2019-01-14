@@ -11,12 +11,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.le.aestroider.R
 import com.le.aestroider.app.AestroiderApp
 import com.le.aestroider.domain.NearEarthObject
 import com.le.aestroider.feature.home.adapter.HomeAdapter
+import com.le.aestroider.feature.home.listener.HomeRecyclerViewScrollListener
 import com.le.aestroider.feature.home.viewmodel.HomeViewModel
 import com.le.aestroider.feature.neodetails.ui.NeoDetailsActivity
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -55,7 +57,7 @@ class HomeFragment : Fragment() {
         subscribeViewStates()
         lifecycle.addObserver(viewModel)
         setupViews()
-        getNeoFeed()
+        getNeoFeed(false)
     }
 
     private fun subscribeViewStates() {
@@ -63,6 +65,7 @@ class HomeFragment : Fragment() {
             when (it) {
                 is HomeViewModel.ViewState.UpdateTitle -> activity!!.setTitle(it.title)
                 is HomeViewModel.ViewState.UpdateList -> updateNeoFeed(it.list)
+                is HomeViewModel.ViewState.ClearList -> clearNeoFeed()
                 is HomeViewModel.ViewState.ShowLoading -> showLoading(it.show)
                 is HomeViewModel.ViewState.LaunchNeoDetailsScreen -> launchNeoDetailsActivity(it.nearEarthObject)
                 is HomeViewModel.ViewState.ShowErrorMessage -> showErrorMessage(it.show, it.message)
@@ -71,29 +74,44 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupViews() {
-        val layoutManager = LinearLayoutManager(activity)
-        home_rv.layoutManager = layoutManager
-        home_rv.addItemDecoration(DividerItemDecoration(activity, layoutManager.orientation))
+        setupRecyclerView()
         homeAdapter = HomeAdapter(activity!!)
         home_rv.adapter = homeAdapter
         swipe_to_fresh.setOnRefreshListener {
-            getNeoFeed()
+            getNeoFeed(true)
         }
         homeAdapter?.onClickObserver?.observe(this, Observer {
             viewModel.onNeoItemSelected(it)
         })
         retry_btn.setOnClickListener {
-            viewModel.getNeoFeed()
+            viewModel.getNeoFeed(true)
         }
     }
 
-    private fun getNeoFeed() {
-        viewModel.getNeoFeed()
+    private fun setupRecyclerView() {
+        val layoutManager = LinearLayoutManager(activity)
+        home_rv.layoutManager = layoutManager
+        home_rv.addItemDecoration(DividerItemDecoration(activity, layoutManager.orientation))
+        home_rv.itemAnimator = DefaultItemAnimator()
+        val scrollListener = HomeRecyclerViewScrollListener(layoutManager)
+        home_rv.addOnScrollListener(scrollListener)
+        scrollListener.loadMoreDataObserver.observe(activity!!, Observer {
+            viewModel.getNextNeoFeed()
+        })
+
+    }
+
+    private fun getNeoFeed(forceRefresh: Boolean) {
+        viewModel.getNeoFeed(forceRefresh)
     }
 
     private fun updateNeoFeed(feed: MutableList<NearEarthObject>) {
-        homeAdapter?.listItems = feed
+        homeAdapter?.addAll(feed)
         swipe_to_fresh.isRefreshing = false
+    }
+
+    private fun clearNeoFeed(){
+        homeAdapter?.clearAll()
     }
 
     private fun showLoading(show: Boolean) {

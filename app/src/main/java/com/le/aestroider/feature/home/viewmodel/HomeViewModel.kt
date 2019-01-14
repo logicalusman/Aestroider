@@ -16,10 +16,12 @@ import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(private val repository: AestroiderRepository) : ViewModel(), LifecycleObserver {
+
     sealed class ViewState {
         class UpdateTitle(@StringRes val title: Int) : ViewState()
         class ShowLoading(val show: Boolean) : ViewState()
         class UpdateList(val list: MutableList<NearEarthObject>) : ViewState()
+        class ClearList():ViewState()
         class LaunchNeoDetailsScreen(val nearEarthObject: NearEarthObject) : ViewState()
         class ShowErrorMessage(val show: Boolean, @StringRes val message: Int) : ViewState()
     }
@@ -41,18 +43,48 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
         viewState.value = ViewState.LaunchNeoDetailsScreen(nearEarthObject)
     }
 
-    fun getNeoFeed() {
+    /**
+     * This method must be called to get next feed after the feed is retrieved successfully via getNeoFeed() once.
+     */
+    fun getNextNeoFeed() {
+        feedCache?.let {
+            viewState.value = ViewState.ShowLoading(true)
+            getFeed(it.nextFeedStartDate, it.nextFeedEndDate,false)
+        }
+    }
+
+    /**
+     * Setting forceRefresh to true will call the api, the cache will be ignored.
+     * Call this method very first time to get the feed.
+     *
+     */
+    fun getNeoFeed(forceRefresh: Boolean) {
+        if (!forceRefresh && feedCache != null) {
+            viewState.value = feedCache?.feed?.let { ViewState.UpdateList(it) }
+            return
+        }
+        getFeed(Utils.getCurrentDate(), Utils.getDateWeekAfterCurrentDate(),true)
+    }
+
+    private fun getFeed(startDate: String, endDate: String, forceRefresh: Boolean) {
         // in case error message was displayed before, it will dismiss it
         viewState.value = ViewState.ShowErrorMessage(false, 0)
         // show loading
         viewState.value = ViewState.ShowLoading(true)
         // fetch data
-        disposable = repository.getNeoFeed(Utils.getCurrentDate(), Utils.getDateWeekAfterCurrentDate()).subscribe {
+        disposable = repository.getNeoFeed(startDate, endDate).subscribe {
             // fetch call finished here, so dismiss loading show
             viewState.value = ViewState.ShowLoading(false)
             if (it.success) {
                 // data received, populate the feed
-                viewState.value = it.data?.feed?.let { feedIt -> ViewState.UpdateList(feedIt) }
+                // it was a force refresh, so clear existing list
+                if( forceRefresh ){
+                    viewState.value = ViewState.ClearList()
+                }
+                viewState.value = it.data?.feed?.let { feedIt ->
+                    feedCache = it.data
+                    ViewState.UpdateList(feedIt)
+                }
             } else {
                 // Oops! error, notify about the error
                 when (it.errorType) {

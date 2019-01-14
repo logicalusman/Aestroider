@@ -18,18 +18,12 @@ import com.le.aestroider.feature.home.viewholder.HomeViewHolder
  */
 class HomeAdapter(private val context: Context) : RecyclerView.Adapter<HomeViewHolder>() {
 
-    var listItems: MutableList<NearEarthObject>? = null
-        set(list) {
-            field = list
-            notifyDataSetChanged()
-        }
+    var listItems = mutableListOf<NearEarthObject>()
     val onClickObserver = MutableLiveData<NearEarthObject>()
 
     fun add(item: NearEarthObject) {
-        listItems?.let {
-            it.add(item)
-            notifyItemInserted(it.size - 1)
-        }
+        listItems.add(item)
+        notifyItemInserted(listItems.size - 1)
     }
 
     fun addAll(items: MutableList<NearEarthObject>) {
@@ -38,17 +32,21 @@ class HomeAdapter(private val context: Context) : RecyclerView.Adapter<HomeViewH
         }
     }
 
+    fun clearAll(){
+        listItems.clear()
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeViewHolder {
         return HomeViewHolder(LayoutInflater.from(context).inflate(R.layout.neo_row, parent, false), onClickObserver)
     }
 
     override fun getItemCount(): Int {
-        return listItems?.size ?: 0
+        return listItems.size
 
     }
 
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
-        holder.setData(listItems?.get(position))
+        holder.setData(listItems.get(position))
     }
 }
