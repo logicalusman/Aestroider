@@ -11,6 +11,7 @@ import com.le.aestroider.data.AestroiderRepository
 import com.le.aestroider.domain.ErrorType
 import com.le.aestroider.domain.NearEarthObject
 import com.le.aestroider.domain.NearEarthObjectFeed
+import com.le.aestroider.domain.Result
 import com.le.aestroider.util.Utils
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
@@ -21,7 +22,7 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
         class UpdateTitle(@StringRes val title: Int) : ViewState()
         class ShowLoading(val show: Boolean) : ViewState()
         class UpdateList(val list: MutableList<NearEarthObject>) : ViewState()
-        class ClearList():ViewState()
+        class ClearList() : ViewState()
         class LaunchNeoDetailsScreen(val nearEarthObject: NearEarthObject) : ViewState()
         class ShowErrorMessage(val show: Boolean, @StringRes val message: Int) : ViewState()
     }
@@ -29,9 +30,15 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
     val viewState: MutableLiveData<ViewState> = MutableLiveData()
 
     // private vars
+    private data class FeedCache(
+        var feedListCache: MutableList<NearEarthObject>,
+        var nextStartDateCache: String,
+        var nextEndDateCache: String
+    )
+
     private var disposable: Disposable? = null
     // acts as a cache, this will avoid redundant trips to the network api
-    private var feedCache: NearEarthObjectFeed? = null
+    private var feedCache: FeedCache? = null
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun setTitle() {
@@ -49,7 +56,7 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
     fun getNextNeoFeed() {
         feedCache?.let {
             viewState.value = ViewState.ShowLoading(true)
-            getFeed(it.nextFeedStartDate, it.nextFeedEndDate,false)
+            getFeed(it.nextStartDateCache, it.nextEndDateCache, false)
         }
     }
 
@@ -60,10 +67,11 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
      */
     fun getNeoFeed(forceRefresh: Boolean) {
         if (!forceRefresh && feedCache != null) {
-            viewState.value = feedCache?.feed?.let { ViewState.UpdateList(it) }
+
+            viewState.value = feedCache?.feedListCache?.let { ViewState.UpdateList(it) }
             return
         }
-        getFeed(Utils.getCurrentDate(), Utils.getDateWeekAfterCurrentDate(),true)
+        getFeed(Utils.getCurrentDate(), Utils.getDateWeekAfterCurrentDate(), forceRefresh)
     }
 
     private fun getFeed(startDate: String, endDate: String, forceRefresh: Boolean) {
@@ -76,31 +84,62 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
             // fetch call finished here, so dismiss loading show
             viewState.value = ViewState.ShowLoading(false)
             if (it.success) {
-                // data received, populate the feed
-                // it was a force refresh, so clear existing list
-                if( forceRefresh ){
-                    viewState.value = ViewState.ClearList()
-                }
-                viewState.value = it.data?.feed?.let { feedIt ->
-                    feedCache = it.data
-                    ViewState.UpdateList(feedIt)
-                }
+                // data received successfully, populate the feed
+                handleSuccess(forceRefresh, it)
             } else {
                 // Oops! error, notify about the error
-                when (it.errorType) {
-                    // different error message can be displayed depending on error type
-                    is ErrorType.NetworkError -> viewState.value =
-                            ViewState.ShowErrorMessage(true, R.string.internet_error_msg)
-                    is ErrorType.TimeoutError -> viewState.value =
-                            ViewState.ShowErrorMessage(true, R.string.internet_error_msg)
-                    else -> viewState.value = ViewState.ShowErrorMessage(true, R.string.internet_error_msg)
+                handleError(it)
+            }
+        }
+    }
+
+    private fun handleSuccess(forceRefresh: Boolean, result: Result<NearEarthObjectFeed>) {
+        updateCache(forceRefresh, result)
+        viewState.value = result.data?.feed?.let { feedIt ->
+            ViewState.UpdateList(feedIt)
+        }
+    }
+
+    private fun updateCache(forceRefresh: Boolean, result: Result<NearEarthObjectFeed>) {
+
+
+        if (forceRefresh) {
+            // result was a force refresh, so clear existing list
+            viewState.value = ViewState.ClearList()
+            // replace existing cache with new data
+            result.data?.let {
+                feedCache?.feedListCache = it.feed
+                feedCache?.nextStartDateCache = it.nextFeedStartDate
+                feedCache?.nextEndDateCache = it.nextFeedEndDate
+            }
+        } else {
+
+            result.data?.let {
+                if (feedCache == null) {
+                    feedCache = FeedCache(it.feed, it.nextFeedStartDate, it.nextFeedEndDate)
+                } else {
+                    feedCache?.feedListCache?.addAll(it.feed)
+                    feedCache?.nextStartDateCache = it.nextFeedStartDate
+                    feedCache?.nextEndDateCache = it.nextFeedEndDate
                 }
             }
         }
     }
 
+    private fun handleError(result: Result<NearEarthObjectFeed>) {
+        when (result.errorType) {
+            // different error message can be displayed depending on error type
+            is ErrorType.NetworkError -> viewState.value =
+                    ViewState.ShowErrorMessage(true, R.string.internet_error_msg)
+            is ErrorType.TimeoutError -> viewState.value =
+                    ViewState.ShowErrorMessage(true, R.string.internet_error_msg)
+            else -> viewState.value = ViewState.ShowErrorMessage(true, R.string.internet_error_msg)
+        }
+    }
+
     override fun onCleared() {
         disposable?.dispose()
+        feedCache?.feedListCache?.clear()
         super.onCleared()
     }
 }

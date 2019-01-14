@@ -11,14 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.le.aestroider.R
 import com.le.aestroider.app.AestroiderApp
 import com.le.aestroider.domain.NearEarthObject
 import com.le.aestroider.feature.home.adapter.HomeAdapter
-import com.le.aestroider.feature.home.listener.HomeRecyclerViewScrollListener
 import com.le.aestroider.feature.home.viewmodel.HomeViewModel
 import com.le.aestroider.feature.neodetails.ui.NeoDetailsActivity
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -38,6 +36,7 @@ class HomeFragment : Fragment() {
     // private vars
     private lateinit var viewModel: HomeViewModel
     private var homeAdapter: HomeAdapter? = null
+    private val TAG = "HomeFragment"
 
     init {
         AestroiderApp.dataComponent.inject(this)
@@ -80,9 +79,18 @@ class HomeFragment : Fragment() {
         swipe_to_fresh.setOnRefreshListener {
             getNeoFeed(true)
         }
-        homeAdapter?.onClickObserver?.observe(this, Observer {
-            viewModel.onNeoItemSelected(it)
-        })
+        homeAdapter?.let {
+            it.onClickObserver.observe(this, Observer { data ->
+                viewModel.onNeoItemSelected(data)
+            })
+
+            it.loadNextPageObserver.observe(this, Observer { _ ->
+                viewModel.getNextNeoFeed()
+            })
+        }
+
+
+        // re-attempt getting feed
         retry_btn.setOnClickListener {
             viewModel.getNeoFeed(true)
         }
@@ -92,13 +100,6 @@ class HomeFragment : Fragment() {
         val layoutManager = LinearLayoutManager(activity)
         home_rv.layoutManager = layoutManager
         home_rv.addItemDecoration(DividerItemDecoration(activity, layoutManager.orientation))
-        home_rv.itemAnimator = DefaultItemAnimator()
-        val scrollListener = HomeRecyclerViewScrollListener(layoutManager)
-        home_rv.addOnScrollListener(scrollListener)
-        scrollListener.loadMoreDataObserver.observe(activity!!, Observer {
-            viewModel.getNextNeoFeed()
-        })
-
     }
 
     private fun getNeoFeed(forceRefresh: Boolean) {
@@ -110,7 +111,7 @@ class HomeFragment : Fragment() {
         swipe_to_fresh.isRefreshing = false
     }
 
-    private fun clearNeoFeed(){
+    private fun clearNeoFeed() {
         homeAdapter?.clearAll()
     }
 
@@ -141,12 +142,4 @@ class HomeFragment : Fragment() {
         intent.putExtra(NeoDetailsActivity.EXTRA_NEO_DETAILS, nearEarthObject)
         startActivity(intent)
     }
-
-    companion object {
-        fun newInstance(): HomeFragment {
-            return HomeFragment()
-        }
-    }
-
-
 }
