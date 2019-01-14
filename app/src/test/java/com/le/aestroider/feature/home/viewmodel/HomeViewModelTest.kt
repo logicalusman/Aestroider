@@ -106,10 +106,9 @@ class HomeViewModelTest {
     @Test
     fun getNeoFeed() {
         homeViewModel.getNeoFeed(false)
-        Mockito.verify(mockObserver, times(4)).onChanged(argumentCaptor.capture())
         // the calls changes ui state 4 times
+        Mockito.verify(mockObserver, times(4)).onChanged(argumentCaptor.capture())
         val listOfStates = argumentCaptor.allValues
-        Assert.assertEquals(4, listOfStates.size)
         Assert.assertTrue(listOfStates[0] is HomeViewModel.ViewState.ShowErrorMessage)
         Assert.assertTrue(listOfStates[1] is HomeViewModel.ViewState.ShowLoading)
         Assert.assertTrue(listOfStates[2] is HomeViewModel.ViewState.ShowLoading)
