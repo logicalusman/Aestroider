@@ -35,6 +35,7 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
         var nextStartDateCache: String,
         var nextEndDateCache: String
     )
+
     private var disposable: Disposable? = null
     // Acts as in-memory cache, this will avoid redundant trips to the network api esp. when rotating device
     private var feedCache: FeedCache? = null
@@ -74,8 +75,6 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
     }
 
     private fun getFeed(startDate: String, endDate: String, forceRefresh: Boolean) {
-        // in case error message was displayed before, it will dismiss it
-        viewState.value = ViewState.ShowErrorMessage(false, 0)
         // show loading
         viewState.value = ViewState.ShowLoading(true)
         // fetch data

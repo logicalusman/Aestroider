@@ -1,6 +1,7 @@
 package com.le.aestroider.feature.home.ui
 
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.le.aestroider.R
 import com.le.aestroider.app.AestroiderApp
 import com.le.aestroider.domain.NearEarthObject
+import com.le.aestroider.feature.common.ui.ErrorActivity
 import com.le.aestroider.feature.home.adapter.HomeAdapter
 import com.le.aestroider.feature.home.viewmodel.HomeViewModel
 import com.le.aestroider.feature.neodetails.ui.NeoDetailsActivity
@@ -59,6 +61,12 @@ class HomeFragment : Fragment() {
         getNeoFeed(false)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            getNeoFeed(true)
+        }
+    }
+
     private fun subscribeViewStates() {
         viewModel.viewState.observe(activity!!, Observer {
             when (it) {
@@ -89,11 +97,6 @@ class HomeFragment : Fragment() {
             })
         }
 
-
-        // re-attempt getting feed
-        retry_btn.setOnClickListener {
-            viewModel.getNeoFeed(true)
-        }
     }
 
     private fun setupRecyclerView() {
@@ -120,21 +123,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun showErrorMessage(show: Boolean, @StringRes message: Int) {
-        if (show) {
-            swipe_to_fresh.visibility = View.GONE
-            error_container.visibility = View.VISIBLE
-            retry_btn.visibility = View.VISIBLE
-            error_msg_tv.setText(message)
-        } else {
-            hideErrorMessage()
-        }
-    }
-
-    private fun hideErrorMessage() {
-        swipe_to_fresh.visibility = View.VISIBLE
-        error_container.visibility = View.GONE
-        retry_btn.visibility = View.GONE
-
+        val intent = Intent(activity!!, ErrorActivity::class.java)
+        startActivityForResult(intent, 0)
     }
 
     private fun launchNeoDetailsActivity(nearEarthObject: NearEarthObject) {
