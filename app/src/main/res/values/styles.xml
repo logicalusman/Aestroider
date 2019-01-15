@@ -8,4 +8,30 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="ListViewMainText">
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="ListViewSubText">
+        <item name="android:textColor">@color/colorGrey</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="ErrorScreenHeaderText">
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+
+    <style name="ErrorScreenMessageText">
+        <item name="android:textColor">@color/colorGrey</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+
+    <style name="AppButton">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
 </resources>

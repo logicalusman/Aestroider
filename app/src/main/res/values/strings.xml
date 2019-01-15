@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Aestroider</string>
+    <string name="near_earth_objects">Near Earth Objects</string>
+    <string name="potential_hazard_warning">Potential Hazard Warning</string>
+    <string name="share">Share</string>
+    <string name="open_on_jpl_nasa_gov">Open on JPL.NASA.GOV</string>
+    <string name="object_is_not_on_collision_course_with_earth">Object is not on collision course with Earth</string>
+    <string name="collision_course_with_earth">Collision course with Earth</string>
+    <string name="hazardous">Hazardous</string>
+    <string name="no_hazard">No Hazard</string>
+    <string name="absolute_brightness">Absolute brightness</string>
+    <string name="estimated_diameter">Estimated diameter</string>
+    <string name="sharing_neo_url">Sharing Neo Url</string>
+    <string name="oops">Oops!</string>
+    <string name="internet_error_msg">Something went wrong. Make sure you are connected to the internet.</string>
+    <string name="retry">Retry</string>
 </resources>
