@@ -107,15 +107,14 @@ class HomeViewModelTest {
     fun getNeoFeed() {
         homeViewModel.getNeoFeed(false)
         // the calls changes ui state 4 times
-        Mockito.verify(mockObserver, times(4)).onChanged(argumentCaptor.capture())
+        Mockito.verify(mockObserver, times(3)).onChanged(argumentCaptor.capture())
         val listOfStates = argumentCaptor.allValues
-        Assert.assertTrue(listOfStates[0] is HomeViewModel.ViewState.ShowErrorMessage)
+        Assert.assertTrue(listOfStates[0] is HomeViewModel.ViewState.ShowLoading)
         Assert.assertTrue(listOfStates[1] is HomeViewModel.ViewState.ShowLoading)
-        Assert.assertTrue(listOfStates[2] is HomeViewModel.ViewState.ShowLoading)
-        Assert.assertTrue(listOfStates[3] is HomeViewModel.ViewState.UpdateList)
+        Assert.assertTrue(listOfStates[2] is HomeViewModel.ViewState.UpdateList)
 
         // check the list
-        val list = (listOfStates[3] as HomeViewModel.ViewState.UpdateList).list
+        val list = (listOfStates[2] as HomeViewModel.ViewState.UpdateList).list
         Assert.assertEquals(listOfNeo.size, list.size)
         // nice to test some items
         Assert.assertEquals("Alpha aes4", list.get(3).name)
