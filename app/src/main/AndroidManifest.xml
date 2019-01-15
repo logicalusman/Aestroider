@@ -21,6 +21,8 @@
         </activity>
         <activity android:name=".feature.neodetails.ui.NeoDetailsActivity">
         </activity>
+        <activity android:name=".feature.common.ui.ErrorActivity">
+        </activity>
     </application>
 
 </manifest>
