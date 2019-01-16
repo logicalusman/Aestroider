@@ -47,10 +47,13 @@ Used for mocking & unit testing
 ## Screenshots
 
 ##### Neo Feed screen
-<img width="400" alt="Neo Feed" src="docs/neo_screen.png">
+<img width="400" alt="Neo Feed" src="docs/neo_screen.png" />
+
 ##### Neo Details screen
-<img width="400" alt="Neo Details" src="docs/noe_details.png">
+<img width="400" alt="Neo Details" src="docs/noe_details.png" />
+
 ##### Share screen
-<img width="400" alt="Share" src="docs/share.png">
+<img width="400" alt="Share" src="docs/share.png" />
+
 ##### Error screen
-<img width="400" alt="Share" src="docs/error.png">
+<img width="400" alt="Share" src="docs/error.png" />
