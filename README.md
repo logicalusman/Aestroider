@@ -46,15 +46,11 @@ Used for mocking & unit testing
 
 ## Screenshots
 
-![Alt text](docs/neo_screen.png?raw=true "Neo Feed")
-
-![Alt text](docs/neo_details.png?raw=true "Neo Details")
-
-![Alt text](docs/share.png?raw=true "Share")
-
-![Alt text](docs/error.png?raw=true "Error")
-
-
-
-
-
+##### Neo Feed screen
+<img width="400" alt="Neo Feed" src="docs/neo_screen.png">
+##### Neo Details screen
+<img width="400" alt="Neo Details" src="docs/noe_details.png">
+##### Share screen
+<img width="400" alt="Share" src="docs/share.png">
+##### Error screen
+<img width="400" alt="Share" src="docs/error.png">
