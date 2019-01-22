@@ -86,8 +86,10 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
                 startDate,
                 endDate
             ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+                viewState.value = ViewState.ShowLoading(false)
                 handleSuccess(forceRefresh, it)
             }, {
+                viewState.value = ViewState.ShowLoading(false)
                 handleError(Result.fromError(it))
             })
 
