@@ -9,12 +9,14 @@ import com.le.aestroider.R
 import com.le.aestroider.data.AestroiderRepository
 import com.le.aestroider.domain.NearEarthObject
 import com.le.aestroider.domain.NearEarthObjectFeed
-import com.le.aestroider.domain.Result
 import com.le.aestroider.util.Utils
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import io.reactivex.Observable
+import io.reactivex.android.plugins.RxAndroidPlugins
+import io.reactivex.plugins.RxJavaPlugins
+import io.reactivex.schedulers.Schedulers
 import junit.framework.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -24,6 +26,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 
+
 class HomeViewModelTest {
 
     @get:Rule
@@ -31,8 +34,7 @@ class HomeViewModelTest {
 
     val listOfNeo = mutableListOf<NearEarthObject>()
     var neoFeed: NearEarthObjectFeed? = null
-    var result: Result<NearEarthObjectFeed>? = null
-    var resultObservable: Observable<Result<NearEarthObjectFeed>>? = null
+    var resultObservable: Observable<NearEarthObjectFeed>? = null
     lateinit var homeViewModel: HomeViewModel
     val aestroiderRepositoryMock: AestroiderRepository = mock()
     val mockObserver: Observer<HomeViewModel.ViewState> = mock()
@@ -44,8 +46,22 @@ class HomeViewModelTest {
         "http://url.com", 12.2, 1.21, 2.89
     )
 
+
+    fun setupRxForTest() {
+        RxAndroidPlugins.reset()
+        RxJavaPlugins.reset()
+        RxJavaPlugins.setIoSchedulerHandler {
+            return@setIoSchedulerHandler Schedulers.trampoline()
+        }
+
+        RxAndroidPlugins.setInitMainThreadSchedulerHandler({
+            return@setInitMainThreadSchedulerHandler Schedulers.trampoline()
+        })
+    }
+
     @Before
     fun setUp() {
+        setupRxForTest()
         for (i in 1..10)
             listOfNeo.add(
                 NearEarthObject(
@@ -59,10 +75,7 @@ class HomeViewModelTest {
                 Utils.getCurrentDate(), 13
             ), listOfNeo
         )
-        neoFeed?.let {
-            result = Result.fomData(it)
-        }
-        resultObservable = Observable.just(result)
+        resultObservable = Observable.just(neoFeed)
         homeViewModel = HomeViewModel(aestroiderRepositoryMock)
         homeViewModel.viewState.observeForever(mockObserver)
 
@@ -106,7 +119,7 @@ class HomeViewModelTest {
     @Test
     fun getNeoFeed() {
         homeViewModel.getNeoFeed(false)
-        // the calls changes ui state 4 times
+        // the calls changes ui state 3 times
         Mockito.verify(mockObserver, times(3)).onChanged(argumentCaptor.capture())
         val listOfStates = argumentCaptor.allValues
         Assert.assertTrue(listOfStates[0] is HomeViewModel.ViewState.ShowLoading)
