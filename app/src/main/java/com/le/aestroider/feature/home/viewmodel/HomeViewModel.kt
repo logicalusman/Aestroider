@@ -13,7 +13,9 @@ import com.le.aestroider.domain.NearEarthObject
 import com.le.aestroider.domain.NearEarthObjectFeed
 import com.le.aestroider.domain.Result
 import com.le.aestroider.util.Utils
-import io.reactivex.disposables.Disposable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(private val repository: AestroiderRepository) : ViewModel(), LifecycleObserver {
@@ -36,7 +38,7 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
         var nextEndDateCache: String
     )
 
-    private var disposable: Disposable? = null
+    private var disposable = CompositeDisposable()
     // Acts as in-memory cache, this will avoid redundant trips to the network api esp. when rotating device
     private var feedCache: FeedCache? = null
 
@@ -78,43 +80,42 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
         // show loading
         viewState.value = ViewState.ShowLoading(true)
         // fetch data
-        disposable = repository.getNeoFeed(startDate, endDate).subscribe {
-            // fetch call finished here, so dismiss loading show
-            viewState.value = ViewState.ShowLoading(false)
-            if (it.success) {
-                // data received successfully, populate the feed
+        disposable.add(
+
+            repository.getNeoFeed(
+                startDate,
+                endDate
+            ).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
                 handleSuccess(forceRefresh, it)
-            } else {
-                // Oops! error, notify about the error
-                handleError(it)
-            }
-        }
+            }, {
+                handleError(Result.fromError(it))
+            })
+
+        )
+
     }
 
-    private fun handleSuccess(forceRefresh: Boolean, result: Result<NearEarthObjectFeed>) {
+    private fun handleSuccess(forceRefresh: Boolean, result: NearEarthObjectFeed) {
         updateCache(forceRefresh, result)
-        viewState.value = result.data?.feed?.let { feedIt ->
-            ViewState.UpdateList(feedIt)
-        }
+        viewState.value = ViewState.UpdateList(result.feed)
     }
 
-    private fun updateCache(forceRefresh: Boolean, result: Result<NearEarthObjectFeed>) {
-        result.data?.let {
-            if (forceRefresh) {
-                // result was a force refresh, so clear existing list
-                viewState.value = ViewState.ClearList()
-                // replace existing cache with new data
-                feedCache?.feedListCache = it.feed
+    private fun updateCache(forceRefresh: Boolean, result: NearEarthObjectFeed) {
+        if (forceRefresh) {
+            // result was a force refresh, so clear existing list
+            viewState.value = ViewState.ClearList()
+            // replace existing cache with new data
+            feedCache?.feedListCache = result.feed
+        } else {
+            if (feedCache == null) {
+                // first time, init cache first
+                feedCache = FeedCache(result.feed, result.nextFeedStartDate, result.nextFeedEndDate)
             } else {
-                if (feedCache == null) {
-                    // first time, init cache first
-                    feedCache = FeedCache(it.feed, it.nextFeedStartDate, it.nextFeedEndDate)
-                } else {
-                    feedCache?.feedListCache?.addAll(it.feed)
-                }
+                feedCache?.feedListCache?.addAll(result.feed)
             }
-            updateDateInCache(it)
         }
+        updateDateInCache(result)
+
     }
 
     private fun updateDateInCache(it: NearEarthObjectFeed) {
@@ -136,7 +137,7 @@ class HomeViewModel @Inject constructor(private val repository: AestroiderReposi
     }
 
     override fun onCleared() {
-        disposable?.dispose()
+        disposable.dispose()
         feedCache?.feedListCache?.clear()
         super.onCleared()
     }

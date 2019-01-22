@@ -5,5 +5,5 @@ import com.le.aestroider.domain.Result
 import io.reactivex.Observable
 
 interface BaseRepository {
-    fun getNeoFeed(startDate: String, endDate: String): Observable<Result<NearEarthObjectFeed>>
+    fun getNeoFeed(startDate: String, endDate: String): Observable<NearEarthObjectFeed>
 }

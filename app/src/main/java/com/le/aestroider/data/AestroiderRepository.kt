@@ -2,7 +2,6 @@ package com.le.aestroider.data
 
 import com.le.aestroider.data.network.NetworkRepository
 import com.le.aestroider.domain.NearEarthObjectFeed
-import com.le.aestroider.domain.Result
 import io.reactivex.Observable
 import javax.inject.Inject
 
@@ -16,7 +15,7 @@ import javax.inject.Inject
  */
 class AestroiderRepository @Inject constructor(private val networkRepository: NetworkRepository) {
 
-    fun getNeoFeed(startDate: String, endDate: String): Observable<Result<NearEarthObjectFeed>> {
+    fun getNeoFeed(startDate: String, endDate: String): Observable<NearEarthObjectFeed> {
         return networkRepository.getNeoFeed(startDate, endDate)
     }
 

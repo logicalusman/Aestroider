@@ -3,12 +3,8 @@ package com.le.aestroider.data.network
 import com.le.aestroider.data.base.BaseRepository
 import com.le.aestroider.data.network.response.NeoFeedResponse
 import com.le.aestroider.domain.NearEarthObjectFeed
-import com.le.aestroider.domain.Result
 import com.le.aestroider.util.Utils
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.SingleSubject
 import javax.inject.Inject
 
 /**
@@ -23,17 +19,12 @@ class NetworkRepository @Inject constructor(private val neoApi: NasaNeoApi) : Ba
     // The api only allows 7 days of feed in a single call
     val maxDaysFeedLimit = 7
 
-    override fun getNeoFeed(startDate: String, endDate: String): Observable<Result<NearEarthObjectFeed>> {
-        val neoFeedSubject = SingleSubject.create<Result<NearEarthObjectFeed>>()
-        // another way of parsing the feed is using Rx map operator
-        val disposable = neoApi.getNeoFeed(startDate = startDate, endDate = endDate).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                neoFeedSubject.onSuccess(Result.fomData(parseFeed(it)))
-            }, {
-                neoFeedSubject.onSuccess(Result.fromError(it))
-            })
+    override fun getNeoFeed(startDate: String, endDate: String): Observable<NearEarthObjectFeed> {
 
-        return neoFeedSubject.toObservable()
+        return neoApi.getNeoFeed(startDate, endDate).map {
+            return@map parseFeed(it)
+        }
+
     }
 
     private fun parseFeed(response: NeoFeedResponse): NearEarthObjectFeed {
